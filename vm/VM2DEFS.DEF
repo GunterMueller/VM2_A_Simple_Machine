@@ -1,0 +1,88 @@
+DEFINITION MODULE VM2Defs;
+
+(* Types and constants for the virtual machine, including the instruction set.
+*)
+
+EXPORT QUALIFIED maxMem, address, opCode;
+
+CONST maxMem = 4095;
+
+TYPE
+    address = [0..maxMem];
+
+(* The opCode type is the instruction set for the virtual machine.  In the
+   comments, words on the stack are denoted by letters and separated by a
+   slash (which can be read as "under").  The leftmost item is at the top of
+   the stack.  The right arrow "->" indicates the result of the instruction.
+   For example, "i/j -> i+j" means that the top two elements on the stack
+   removed and their sum is pushed back on the stack.  Integers are denoted by
+   i and j, addresses by a, words (i.e. arbitrary values) by v and w).  PC is
+   the program counter.  Arg stands for the argument to the instruction, which
+   is the word immediately following the instruction in memory. A dot "."
+   indicates that nothing is pushed on or popped off the stack.  The left
+   arrow "<-" denotes assignment.  Parentheses around an address denote the
+   contents of that address.  The ?: notation is borrowed from C.  If the
+   test preceeding the ? is true, the value before the colon is pushed on
+   the stack; if false, the value following the colon is pushed.  *)
+
+
+    opCode =
+       (
+            (* arithmetic *)
+        Add,            (* i/j -> i + j *)
+        Sub,            (* i/j -> i - j *)
+        Mul,            (* i/j -> i * j *)
+        Div,            (* i/j -> i DIV j (remainder ignored) *)
+        Neg,            (* i -> -i *)
+
+            (* boolean *)   (* 1 = TRUE, 0 = FALSE *)
+        Equal,          (* v/w -> (v = w)?  1: 0 *)
+        NotEqual,       (* v/w -> (v <> w)? 1: 0 *)
+        Greater,        (* i/j -> (i > j)?  1: 0 *)
+        Less,           (* i/j -> (i < j)?  1: 0 *)
+        GreaterEqual,   (* i/j -> (i >= j)? 1: 0 *)
+        LessEqual,      (* i/j -> (i <= j)? 1: 0 *)
+        Not,            (* i -> (i = 1)? 0: 1 *)
+
+            (* control *)
+        BranchEqual,    (* w -> .  If w = 0, PC <- arg *)
+        BranchLess,     (* w -> .  If w < 0, PC <- arg *)
+        BranchGreater,  (* w -> .  If w > 0, PC <- arg *)
+        Branch,         (* PC <- arg *)
+        Jump,           (* a -> .  PC <- a *)
+
+            (* stack manipulation *)
+        Push,           (* . -> (arg)  Push contents of memory location *)
+        PushConst,      (* . -> arg    Push constant *)
+        Pop,            (* a/w -> .  a <- w  Pop into mem. loc. on stack *)
+        PopConst,       (* w -> .  arg <- w  Pop into mem. loc. in arg *)
+
+            (* input/output *)
+        Writeint,       (* i -> .  Output integer *)
+        Readint,        (* . -> i  Input integer *)
+        WriteChar,      (* w -> .  w interpreted as ASCII code.  Output char
+*)
+        ReadChar,       (* . -> w  Input char *)
+
+            (* miscellaneous *)
+        Contents,       (* a -> (a)     Indirection *)
+        Halt,           (* halts machine *)
+
+            (* high-level language support *)
+        Call,           (* routine call *)
+        Return,         (* procedure return *)
+        FReturn,        (* function return *)
+        PushL,          (* push non-global variable *)
+        PopL,           (* pop non-global variable *)
+
+            (* Part 3 compiler extensions *)
+        Min,            (* i/j -> minimum of i and j *)
+        Copy,           (* n/a1/a2 -> . copy n words from a2 to a1. *)
+        SetSP,          (* SP <- SP - arg *)
+        Aref,           (* i/u/l/a -> a1. Index array with bounds check *)
+
+        AddrL           (* push address of non-global variable *)
+       );
+
+END VM2Defs.
+

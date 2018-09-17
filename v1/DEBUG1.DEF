@@ -1,0 +1,20 @@
+DEFINITION MODULE Debug;
+
+(* Useful debugging procedures for the SIMPL compiler. *)
+
+FROM Token IMPORT token, tokenList;
+FROM Symbol IMPORT symbol, symbolList;
+FROM Node IMPORT node;
+
+EXPORT QUALIFIED printToken, printTokenList, printSymbol, printSymbolList,
+    printNode;
+
+
+PROCEDURE printToken(VAR t:token);
+PROCEDURE printTokenList(tl:tokenList);
+PROCEDURE printSymbol(s:symbol);
+PROCEDURE printSymbolList(sl:symbolList);
+PROCEDURE printNode(n:node);
+
+END Debug.
+

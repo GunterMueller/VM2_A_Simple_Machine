@@ -1,0 +1,123 @@
+DEFINITION MODULE Node;
+
+(* Nodes are what make up the parse tree produced by the SIMPL parser.
+   They consist of all data relevant to generating code. *)
+
+FROM Token IMPORT tokenClass, typeType;
+FROM Symbol IMPORT symbol;
+
+EXPORT QUALIFIED node, nodeClass, NodeClass, emptyNode, nodeEmpty, freeNode,
+    makeStmtsNode, makeIfNode, makeWhileNode, makeReturnNode,
+    makeAssignmentNode, makeExprListNode, makeOpNode, makeUnopNode,   
+    makeIntegerNode, makeBooleanNode, makeSymbolNode, makeCallNode,
+    makeWriteNode, makeReadNode, makeStringNode, makeCharNode,
+    nodeFirst, nodeRest, nodeTest, nodeThen, nodeElse, nodeStmts, nodeRHS,
+    nodeLHS, nodeArgs, nodeRoutine, nodeExpr, nodeArg, nodeLeftArg, 
+    nodeRightArg, nodeOp, nodeSymbol, nodeType, nodeInt, nodeBool,
+    nodeNumFormals, nodeString, nodeChar;
+
+TYPE
+    NodeClass =    (* the different kinds of nodes *)
+        (nOp,           (* binary operators (+, -, *, /, relations, AND, OR) *)
+        nUnop,          (* unary operators (unary minus, NOT) *)
+        nBool,          (* a boolean constant (TRUE, FALSE) *)
+        nInt,           (* an integer constant *)
+        nChar,          (* a character constant *)
+        nString,        (* a string constant *)
+        nSymbol,        (* a symbol (variable) *)
+        nIf,            (* IF statement *)
+        nWhile,         (* WHILE statement *)
+        nReturn,        (* RETURN statement, either procedure or function *) 
+        nCall,          (* procedure call (statement) or function call *)
+        nAssignment,    (* assignment statement *)    
+        nWrite, nRead,  (* WRITE and READ statements *)
+        nList);         (* a list of statements or expressions *)
+
+    node;
+
+VAR emptyNode: node;
+
+PROCEDURE nodeClass(n:node):NodeClass;
+(* Returns the class of node *)
+
+PROCEDURE nodeEmpty(n:node):BOOLEAN;
+(* Returns true if node is the emptyNode *)
+
+PROCEDURE freeNode(n:node);
+(* Frees the storage associated with n *)
+
+                (*** Node creation ***)
+
+PROCEDURE makeStmtsNode(first, rest:node):node;
+(* Make a node representing a list of statements *)
+
+PROCEDURE makeReturnNode(routine:symbol; returnExpr:node):node;
+(* Make a return node.  Routine is the routine we are returning from. 
+   returnExpr is an expression to be returned, for functions; for procedures,
+   it should be the empty node. *)
+
+PROCEDURE makeCallNode(name:symbol; actuals:node):node;
+PROCEDURE makeWriteNode(actuals:node):node;
+PROCEDURE makeReadNode(actuals:node):node;
+(* In all of these, actuals should have been made with makeExprListNode. *)
+
+PROCEDURE makeIfNode(test, then, else:node):node;
+PROCEDURE makeWhileNode(test, stmts:node):node;
+PROCEDURE makeAssignmentNode(var:symbol; expr:node):node;
+PROCEDURE makeExprListNode(first, rest:node):node;
+PROCEDURE makeOpNode(op:tokenClass; leftarg, rightarg:node):node;
+PROCEDURE makeUnopNode(op:tokenClass; arg:node):node;
+PROCEDURE makeIntegerNode(i:INTEGER):node;
+PROCEDURE makeBooleanNode(b:BOOLEAN):node;
+PROCEDURE makeSymbolNode(id:symbol):node;
+PROCEDURE makeStringNode(s:ARRAY OF CHAR):node;
+PROCEDURE makeCharNode(c:CHAR):node;
+
+                (*** Accessing parts of nodes **)
+
+(* many nodes have a type associated with them *)
+PROCEDURE nodeType(n:node):typeType;
+
+(* for constants *)
+PROCEDURE nodeInt(n:node):INTEGER;
+PROCEDURE nodeBool(n:node):BOOLEAN;
+PROCEDURE nodeChar(n:node):CHAR;
+PROCEDURE nodeString(n:node; VAR s:ARRAY OF CHAR);
+(* Just truncates is s is too short. *)
+
+(* for lists *)
+PROCEDURE nodeFirst(n:node):node;
+PROCEDURE nodeRest(n:node):node;
+
+(* for IF statements *)
+PROCEDURE nodeTest(n:node):node;        (* also for WHILE statements *)
+PROCEDURE nodeThen(n:node):node;
+PROCEDURE nodeElse(n:node):node;
+
+(* for WHILE statements *)
+PROCEDURE nodeStmts(n:node):node;
+
+(* for assignment statements *)
+PROCEDURE nodeRHS(n:node):node;         (* right-hand side *)
+PROCEDURE nodeLHS(n:node):symbol;       (* left-hand side *)
+
+(* for calls *)
+PROCEDURE nodeArgs(n:node):node;
+PROCEDURE nodeRoutine(n:node):symbol;
+
+(* for RETURN statements *)
+PROCEDURE nodeExpr(n:node):node;
+PROCEDURE nodeNumFormals(n:node):CARDINAL;
+
+(* for ops and unops *)
+PROCEDURE nodeArg(n:node):node;
+PROCEDURE nodeLeftArg(n:node):node;
+PROCEDURE nodeRightArg(n:node):node;
+PROCEDURE nodeOp(n:node):tokenClass;
+
+(* for symbols *)
+PROCEDURE nodeSymbol(n:node):symbol;
+
+
+END Node.
+

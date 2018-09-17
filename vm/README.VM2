@@ -1,0 +1,33 @@
+A Guide to the Source Code for VM2
+
+Jonathan Amsterdam
+
+This is the code for the VM2 virtual machine, described in my article
+"Building a Computer in Software."  The code is written in Modula-2.  I
+used the MacModula-2 implementation by Modula Corp., but I used no
+special features of the implementation so the code should be portable.
+Seven modules comprise the program.  They are:
+
+VM2Defs             Definitions for VM2
+VM2                 The virtual machine interpreter
+Monitor             User interface to VM2
+OpNames             Provides a mapping from mnemonics to opcodes
+CharStuff           Character manipulation utilities
+StringStuff         String manipulation utilities
+MyTerminal          I/O utilities
+
+I would appreciate hearing about any bugs.  My BIX logname is "jba".
+
+[Editor's note:  The Modula 2 source files have been combined into one huge
+file called Monitor.VM2.  After you download Monitor.VM2, you will need to
+break it down into the following Modula 2 modules and then compile them:
+
+Monitor.MOD
+VM2Defs.DEF and VM2Defs.MOD
+VM2.DEF and VM2.MOD
+OpNames.DEF and OpNames.MOD
+CharStuff.DEF and CharStuff.MOD
+StringStuff.DEF and StringStuff.MOD
+MyTerminal.DEF and MyTerminal.MOD ]
+
+

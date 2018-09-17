@@ -1,0 +1,66 @@
+DEFINITION MODULE Token;
+
+(* Tokens are what the lexical analyzer returns to the parser.  Keywords are
+   distinct tokens, as are the special characters like parens, colon, etc.
+   TokenLists are lists of tokens; they are used in the "varlist"
+   procedure of the parser.
+   
+  Changes made for part 3:
+    1.  New tokens have been added for the new constructs.
+    2.  The function tokenClassToType has been moved to Symbol to avoid 
+        circular references between Token.DEF and Symbol.DEF.
+    3.  The function isType has been renamed isBuiltinType.
+
+*)
+
+EXPORT QUALIFIED token, tokenClass, stringType, stringlen, isRelation,
+    tokenList, emptyTokenList, tlToken, tlNext, addToTokenList, 
+    tlEmpty, freeTokenList;
+
+CONST stringlen = 80;
+
+TYPE 
+    tokenClass = (And, Array, Assignment, Begin, Character,
+        Colon, Comma, Divide, Do, DotDot, Else, Elsif, End, EndOfInput,
+        Equal, False, Function, Greater, GreaterEqual, Identifier, If, 
+        In, Int, Lbracket, Less, LessEqual, Lparen, Minus, Not,
+        NotEqual, Of, Or, Out, Period, Plus, Procedure,
+        Program, Rbracket, Read, Return, Rparen, Semicolon, String, Then,
+        Times, True, Type, UMinus, Var, While, Write);
+
+
+    stringType = ARRAY[0..stringlen] OF CHAR;
+
+    token = RECORD
+                CASE class:tokenClass OF
+                    Identifier, String: string: stringType;
+                |   Int: integer: INTEGER;
+                |   Character: ch: CHAR;
+                END;
+            END;
+
+    tokenList;
+
+
+VAR emptyTokenList: tokenList;
+
+PROCEDURE isRelation(tc:tokenClass):BOOLEAN;
+(* Returns TRUE if tc is a relational operator (Equal, Greater, etc.) *)
+
+PROCEDURE tlToken(tl:tokenList; VAR t:token);
+(* Gets the first token in the token list. *)
+
+PROCEDURE tlNext(tl:tokenList):tokenList;
+(* Gets the rest of the token list. *)
+
+PROCEDURE addToTokenList(VAR t:token; tl:tokenList):tokenList;
+(* Add a token to the beginning of the token list. *)
+
+PROCEDURE freeTokenList(tl:tokenList);
+(* Free the storage used by the token list. *)
+
+PROCEDURE tlEmpty(tl:tokenList):BOOLEAN;
+(* Return TRUE if the token list is empty. *)
+
+END Token.
+

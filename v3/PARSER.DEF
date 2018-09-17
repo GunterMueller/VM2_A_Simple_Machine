@@ -1,0 +1,63 @@
+DEFINITION MODULE Parser;
+
+(* This is the bulk of the SIMPL parser.  It covers most of the language.
+   For routines (procedures and functions) see Routines.
+   For expressions, see ExprParser.
+
+   Syntax handled by this module:
+
+<program> ::= PROGRAM <id>; <vars> <routines> <block> .
+
+<types> ::= <empty> | TYPE <typelist>
+<typelist> ::= <typedecl> | <typedecl> <typelist>
+<typedecl> ::= <id> = <type> ;
+<type> ::= <id> | ARRAY [ <int> .. <int>] OF <type>
+
+<vars> ::= <empty> | VAR <varlist>
+<varlist> ::= <decl> | <decl> <varlist>
+<decl> ::= <idlist> : <type> ;
+<idlist> ::= <id> | <id> , <idlist>
+
+<block> ::= BEGIN <stmts> END
+<stmts> ::= <empty> | <stmt> ; <stmts>
+<stmt> ::= <while> | <if> | <return> | <assign> | <call>
+<while> ::= WHILE <expr> DO <stmts> END
+<if> ::= IF <elsif> END
+<elsif> ::= <expr> THEN <stmts> <else>
+<else> ::= <empty> | ELSIF <elsif> | ELSE <stmts>
+<return> ::= RETURN | RETURN <expr>
+<assign> ::= <idOrindex> := <expr>
+<call> ::= <id> <actuals>
+<actuals> ::= <empty> | ( <exprlist> )
+<exprlist> ::= <expr> | <expr> , <exprlist>
+*)
+
+FROM Symbol IMPORT symbol;
+FROM Node IMPORT node;
+FROM Token IMPORT tokenList;
+
+EXPORT QUALIFIED program, types, vars, idlist, block, actuals;
+
+PROCEDURE program;
+(* Parse the entire program *)
+
+PROCEDURE types(routineName:symbol);
+(* Parse type declarations.  See below for explanation of routineName. *)
+
+PROCEDURE vars(routineName:symbol);
+(* Parse variable declarations.   RoutineName is the name of the routine
+   currently being compiled; if these are global variables, it should be 
+   the name of the program. *)
+
+PROCEDURE idlist():tokenList;
+(* Parse a list of identifiers *)
+
+PROCEDURE block(routine:symbol):node;
+(* Parse a block of code.  Routine is the routine currently being compiled. *)
+
+PROCEDURE actuals():node;
+(* Parse a list of actual parameters, i.e. a list of expressions. *)
+
+
+END Parser.
+

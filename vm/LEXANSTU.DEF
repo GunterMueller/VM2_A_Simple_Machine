@@ -1,0 +1,111 @@
+DEFINITION MODULE LexAnStuff;
+
+(* Most routines needed for a lexical analyzer.  It uses the routines in InOut
+   to get input, so to get input from a file you have to redirect it,
+   using OpenInput. The analyzer dispatches
+   to routines provided by the user based on the input character.  The
+   default setting is: all characters are illegal, except space, tab
+   and carriage return (whitespace), which are ignored.
+   The analyzer reads a line at a time and keeps track of where it is.
+   This information can be used to write out the line and position of
+   an error.  A default line-writing procedure is provided. *)
+
+EXPORT QUALIFIED maxCharNum, charProc, maxLineLength,
+        getLine, getLineNum, getLinePos, writeLine, getChar, ungetChar,
+        illegalChar, ignore,  posInteger, integer, alphaNumString, string,
+        skipAlphaNum, skipToChar, skipToChars, dispatch,
+        enterAll, enterWhite, enterChar, enterEndOfFile, enterAlphas,
+        enterDigits;
+
+CONST
+    maxCharNum = 127;       (* Largest character in character table *)
+    maxLineLength = 256;    (* Size of line buffer *)
+
+TYPE
+    charProc = PROCEDURE(CHAR);
+
+
+(* line variables *)
+
+PROCEDURE getLine(VAR s:ARRAY OF CHAR);
+(* Reads the current line into s.  If s is too short, the line is truncated. *)
+
+PROCEDURE getLineNum():CARDINAL;
+(* Returns the current line number. *)
+
+PROCEDURE getLinePos():CARDINAL;
+(* Returns the current position on the line. *)
+PROCEDURE writeLine;
+(* Writes the current line and line number on the screen, then below it puts a
+   caret (^) designating the line position. Useful for error routines. *)
+
+(* basic input *)
+
+PROCEDURE getChar():CHAR;
+(* Get a character from the input.  Use this in your custom reading routines
+   when you want a character.  Repeatedly returns EOF on end of file. *)
+
+PROCEDURE ungetChar;
+(* Push a character back on the input.  Can only be called for one character
+   at a time. *)
+
+(* reading procedures *)
+
+PROCEDURE illegalChar(c:CHAR);
+(* Prints out a message and dispatches again. *)
+
+PROCEDURE ignore(c:CHAR);
+(* Just dispatches again. *)
+
+PROCEDURE posInteger(c:CHAR):INTEGER;
+(* Reads a positive integer. *)
+
+PROCEDURE integer(c:CHAR):INTEGER;
+(* Reads an integer, i.e. a sequence of digits optionally preceeded by a - *)
+
+PROCEDURE alphaNumString(c:CHAR; VAR s:ARRAY OF CHAR):BOOLEAN;
+(* Reads a string of letters and numbers. Returns TRUE if ok, FALSE if identifier too long. If the
+identifier is too long, we just stop reading;
+we don't skip to the end.  *)
+
+PROCEDURE string(delimiter:CHAR; VAR s:ARRAY OF CHAR):BOOLEAN;
+(* Reads a string delimited by delimiter.  Backslash is an escape: t for tab,
+   n for newline (carriage return), anything else taken literally.  Returns
+   FALSE if s isn't long enough.  Doesn't skip rest of string. *)
+
+
+(* reading utilities *)
+
+PROCEDURE skipAlphaNum;
+(* Read over alphanumeric characters. *)
+
+PROCEDURE skipToChar(c:CHAR);
+(* Skip over the input until c is reached.  Also stops on end of file. *)
+
+PROCEDURE skipToChars(clist:ARRAY OF CHAR);
+(* Skip over the input until any of the characters in clist is reached.
+   Also stops on end of file. *)
+
+(* character table *)
+
+PROCEDURE dispatch;(* Main routine for dispatching on the next character. *)
+
+PROCEDURE enterChar(c:CHAR; cp:charProc);
+(* Enter the procedure into the table indexed by the character.  When that
+character is seen, the procedure will be called. *)
+
+PROCEDURE enterAll(cp:charProc);
+(* entire table *)
+PROCEDURE enterWhite(cp:charProc);
+(* space, tab and newline *)
+
+PROCEDURE enterAlphas(cp:charProc);
+(* upper and lowercase letters *)
+
+PROCEDURE enterDigits(cp:charProc);
+
+PROCEDURE enterEndOfFile(cp:charProc);
+
+
+END LexAnStuff.
+

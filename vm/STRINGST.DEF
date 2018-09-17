@@ -1,0 +1,16 @@
+DEFINITION MODULE StringStuff;
+
+EXPORT QUALIFIED stringCap, charCap, stringLen, stringCopy, stringEqual;
+
+PROCEDURE charCap(ch:CHAR):CHAR;
+
+PROCEDURE stringCap(VAR s:ARRAY OF CHAR);
+
+PROCEDURE stringLen(VAR s:ARRAY OF CHAR):CARDINAL;
+
+PROCEDURE stringCopy(VAR s1:ARRAY OF CHAR; s2:ARRAY OF CHAR);
+
+PROCEDURE stringEqual(s1, s2:ARRAY OF CHAR):BOOLEAN;
+
+END StringStuff.
+

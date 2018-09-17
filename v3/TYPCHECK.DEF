@@ -1,0 +1,63 @@
+DEFINITION MODULE TypeChecker;
+
+(* Handles the actual type-checking of SIMPL expressions and statements. *)
+
+FROM Token IMPORT tokenClass;
+FROM Node IMPORT node;
+FROM Symbol IMPORT symbol, modeType;
+
+EXPORT QUALIFIED typeCompatible, opAppropriate, callCheck, readCheck, 
+    writeCheck, boolCheck, assignCheck, binopCheck, unopCheck,
+    returnCheck, assignable, hasMode, typeIdentical,
+    indexCheck, baseType;
+
+PROCEDURE typeCompatible(t1, t2:symbol):BOOLEAN;
+(* Returns TRUE if t1 and t2 are compatible types.  In order to avoid
+   cascades of error messages, if one or both of the types is tUnknown, 
+   it still returns TRUE. *)
+
+PROCEDURE typeIdentical(t1, t2:symbol):BOOLEAN;
+(* Returns TRUE iff t1 and t2 are the SAME type. Again, tUnknown is allowed
+   to be the same as anything. *)
+
+PROCEDURE opAppropriate(op:tokenClass; arg:node):BOOLEAN;
+(* Returns TRUE if the type of the argument can be handled by the operator *)
+
+PROCEDURE callCheck(routine:symbol; args:node);
+(* Checks the procedure or function call for right number and types of args. *)
+
+PROCEDURE readCheck(actuals:node);
+(* Checks the call to the READ built-in procedure. *)
+
+PROCEDURE writeCheck(actuals:node);
+(* Checks the call to the WRITE built-in procedure. *)
+
+PROCEDURE boolCheck(n:node);
+
+PROCEDURE assignCheck(var, expr:node);
+
+PROCEDURE returnCheck(routine:symbol; expr:node):BOOLEAN;
+
+PROCEDURE binopCheck(op:tokenClass; leftarg, rightarg:node):BOOLEAN;
+
+PROCEDURE unopCheck(op:tokenClass; arg:node):BOOLEAN;
+
+PROCEDURE assignable(n:node):BOOLEAN;
+(* True if s can be assigned to. *)
+
+PROCEDURE hasMode(n:node; m:modeType):BOOLEAN;
+(* A node has a particular mode iff:
+    1. The node is an index, the array being indexed is a formal and
+       the formal has mode m; OR
+    2. The node is a symbol, the symbol is a formal and it has mode m.
+*)
+
+PROCEDURE indexCheck(index:node);
+(* Checks for compatibility with INTEGER, not of mode OUT *)
+
+PROCEDURE baseType(typeObject:symbol):symbol;
+(* Follows the type field of a symbol until it hits an array type or
+  a built-in scalar type. *)
+
+END TypeChecker.
+

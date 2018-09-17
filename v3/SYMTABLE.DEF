@@ -1,0 +1,51 @@
+DEFINITION MODULE SymbolTable;
+
+(* The symbol table associates symbol records with names of symbols. *)
+
+FROM Symbol IMPORT symbol, Class, modeType;
+FROM Token IMPORT stringType, tokenClass;
+
+EXPORT QUALIFIED enterSymbol, enterLocal, enterFormal, findSymbol, findKeyword,
+                 enterKeyword, beginRoutine, endRoutine, currentLexLevel,
+                 enterArrayType, tUnknown, tBoolean, tChar, tInteger, tString,
+                 lowFunc, highFunc;
+
+(* These are the type objects of the built-in types. *)
+VAR tUnknown, tBoolean, tChar, tInteger, tString:symbol;
+    lowFunc, highFunc:symbol;    (* symbols for pseudo-functions LOW & HIGH *)
+PROCEDURE currentLexLevel():CARDINAL;
+(* Returns the current lexical level *)
+
+
+(* Enter global, local, formal, keyword symbols into the table. 
+   enterSymbol is the general routine and returns the entered symbol.  If the
+   symbol is already present, or if it is a built-in, an error is signalled.  
+   EnterLocal and  enterFormal are used for local variables and formal 
+   parameters only; they take care of inserting the symbol into the list of
+   locals or formals, respectively, which is associated with the routine.  
+   enterArrayType is for giving a name to array type objects. *)
+PROCEDURE enterSymbol(VAR s:stringType; symc:Class; type:symbol):symbol;
+PROCEDURE enterLocal(VAR s:stringType; type, routine:symbol);
+PROCEDURE enterFormal(VAR s:stringType; mode:modeType; type, routine:symbol);
+PROCEDURE enterKeyword(s:stringType; tc:tokenClass);
+PROCEDURE enterArrayType(VAR s:stringType; typeObject:symbol);
+
+PROCEDURE findSymbol(VAR s:stringType):symbol;
+(* Look up the symbol in the table and return it.  Return the empty symbol
+   if not found. *)
+
+PROCEDURE findKeyword(VAR s:stringType; VAR tc:tokenClass):BOOLEAN;
+(* Look up the keyword in the table and put its corresponding token class
+   in tc.  Return FALSE if the symbol wasn't found. *)
+
+PROCEDURE beginRoutine(rname:symbol);
+(* To be called just after the routine name has been entered.  Increments
+   lexical level. Also assigns a unique number to the routine if it isn't
+   global. *)
+
+PROCEDURE endRoutine(rname:symbol);
+(* Clean up the symbol table after a routine has been compiled.  This includes
+   deleting the locals and formals from the table. *)
+
+END SymbolTable.
+

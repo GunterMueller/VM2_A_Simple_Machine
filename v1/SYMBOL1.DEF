@@ -1,0 +1,109 @@
+DEFINITION MODULE Symbol;
+
+(* The symbol data structure contains all the information about symbols (like
+   variables and routine names).  Symbol lists are used for lists of formals
+   and locals. *)
+
+FROM Token IMPORT stringType, tokenClass, typeType;
+
+EXPORT QUALIFIED symbol, emptySymbol, SymbolClass, scopeType, 
+    symbolClass,  symbolString, symbolType, symbolScope, symbolOffset, 
+    symbolFormals, symbolLocals, symbolNext, symbolPrev, symbolTokClass,
+    setSymbolFormals, setSymbolLocals, setSymbolType, setSymbolNext,
+    setSymbolPrev, setSymbolOffset, setSymbolTokClass,
+    symbolClassEqual,   symbolEmpty, symbolEqual,
+    newSymbol, freeSymbol, numFormals, numLocals,
+    symbolList, emptySymbolList, slEmpty, slSymbol, slNext, addToSymbolList,
+    freeSymbolList;
+
+TYPE
+    symbol;
+    symbolList;
+    SymbolClass =   (* the different kinds of symbols *)
+        (Proc, Func, Variable, Keyword, Undeclared);
+
+    (* The scope of a symbol determines who can see it when.  All global
+       variables and routines in SIMPL have global scope.  All local variables
+       and formal parameters have local scope.  The "Formal" entry is there
+       to distinguish locals from formals; it isn't really a scope. *)
+    scopeType = (Global, Local, Formal);
+
+
+VAR emptySymbol:symbol;
+    emptySymbolList:symbolList;
+
+                (*** Symbols ***)
+
+PROCEDURE symbolClass(s:symbol):SymbolClass;
+(* Return the class of the symbol *)
+
+PROCEDURE symbolString(s:symbol; VAR str:stringType);
+(* Return the name of the symbol, as a string *)
+
+(* Symbols are declared to be of a certain type (except procedures) *)
+PROCEDURE symbolType(s:symbol):typeType;
+PROCEDURE setSymbolType(s:symbol; tt:typeType);
+
+PROCEDURE symbolScope(s:symbol):scopeType;
+(* Return the scope of the symbol *)
+
+(* Each formal and local has an offset from the frame pointer. *)
+PROCEDURE symbolOffset(s:symbol):INTEGER;
+PROCEDURE setSymbolOffset(s:symbol; o:INTEGER);
+
+(* These are for routines. They get and set the lists of formals and locals. *)
+PROCEDURE symbolFormals(s:symbol):symbolList;
+PROCEDURE symbolLocals(s:symbol):symbolList;
+PROCEDURE setSymbolFormals(s:symbol; sl:symbolList);
+PROCEDURE setSymbolLocals(s:symbol; sl:symbolList);
+
+(* Return the number of formals or locals in the routine. *)
+PROCEDURE numFormals(s:symbol):CARDINAL;
+PROCEDURE numLocals(s:symbol):CARDINAL;
+
+(* These next two are for implementing a doubly linked list. See SymbolTable.*)
+PROCEDURE symbolNext(s:symbol):symbol;
+PROCEDURE symbolPrev(s:symbol):symbol;
+PROCEDURE setSymbolNext(s1, s2:symbol);
+PROCEDURE setSymbolPrev(s1, s2:symbol);
+
+(* Keyword symbols have a corresponding token class. *)
+PROCEDURE symbolTokClass(s:symbol):tokenClass;
+PROCEDURE setSymbolTokClass(s:symbol; tc:tokenClass);
+
+PROCEDURE symbolClassEqual(s:symbol; sc:SymbolClass):BOOLEAN;
+(* Returns TRUE if the class of s equals sc. *)
+
+PROCEDURE symbolEqual(s1, s2:symbol):BOOLEAN;
+(* Returns TRUE if the two symbols are the same. *)
+
+PROCEDURE symbolEmpty(s:symbol):BOOLEAN;
+(* Returns TRUE if the symbol is the emptySymbol. *)
+
+PROCEDURE newSymbol(VAR str:stringType; sc:SymbolClass; st:scopeType;
+                tt:typeType):symbol;
+(* Creates a new symbol. *)
+
+PROCEDURE freeSymbol(s:symbol);
+(* Frees the storage associated with s. *)
+
+                (*** Symbol Lists ***)
+
+PROCEDURE slEmpty(sl:symbolList):BOOLEAN;
+(* Returns TRUE if sl is the empty symbol list. *)
+
+PROCEDURE slNext(sl:symbolList):symbolList;
+(* Gets the rest of the symbol list. *)
+
+PROCEDURE slSymbol(sl:symbolList):symbol;
+(* Gets the first symbol in the list *)
+
+PROCEDURE addToSymbolList(s:symbol; sl:symbolList):symbolList;
+(* Adds s to sl at the front.  Return the new symbol list. *)
+
+PROCEDURE freeSymbolList(sl:symbolList);
+(* Frees the storage associate with sl (but NOT the storage of the symbols
+   in sl! *)
+
+END Symbol.
+

@@ -1,0 +1,8 @@
+DEFINITION MODULE Init;
+
+EXPORT QUALIFIED enterKeywords;
+
+PROCEDURE enterKeywords;
+
+END Init.
+

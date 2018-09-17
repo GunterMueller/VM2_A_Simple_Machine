@@ -1,0 +1,20 @@
+DEFINITION MODULE OpNames;
+
+(* Provides routines to convert between mnemonics and opCodes.  Also knows
+   whether or not the instructions take arguments. *)
+
+FROM VM2Defs IMPORT opCode;
+
+EXPORT QUALIFIED  opType, opCodeToName, nameToOpCode;
+
+TYPE
+     opType = (NotFound, NoArgs, OneArg, TwoArgs);
+
+PROCEDURE opCodeToName(oc:opCode; VAR s:ARRAY OF CHAR):opType;
+(* Translate the opCode to a string (mnemonic). *)
+
+PROCEDURE nameToOpCode(s:ARRAY OF CHAR; VAR oc:opCode):opType;
+(* Translate the string (mnemonic) to an opCode. *)
+
+END OpNames.
+

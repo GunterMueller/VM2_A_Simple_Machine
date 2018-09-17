@@ -1,0 +1,34 @@
+DEFINITION MODULE SymbolTable;
+
+(* The symbol table associates symbol records with names of symbols. *)
+
+FROM Symbol IMPORT symbol, SymbolClass;
+FROM Token IMPORT stringType, tokenClass, typeType;
+
+EXPORT QUALIFIED enterGlobal, enterLocal, enterFormal, findSymbol, findKeyword,
+                 enterKeyword, endRoutine;
+
+TYPE symProc = PROCEDURE(symbol);
+
+(* Enter global, local, formal and keyword symbols into the table. 
+   enterGlobal returns the entered symbol.  If the symbol is already
+   present, an error is signalled. *)
+PROCEDURE enterGlobal(VAR s:stringType; symc:SymbolClass; tt:typeType):symbol;
+PROCEDURE enterLocal(VAR s:stringType; tt:typeType; routine:symbol);
+PROCEDURE enterFormal(VAR s:stringType; tt:typeType; routine:symbol);
+PROCEDURE enterKeyword(s:stringType; tc:tokenClass);
+
+PROCEDURE findSymbol(VAR s:stringType):symbol;
+(* Look up the symbol in the table and return it.  Return the empty symbol
+   if not found. *)
+
+PROCEDURE findKeyword(VAR s:stringType; VAR tc:tokenClass):BOOLEAN;
+(* Look up the keyword in the table and put its corresponding token class
+   in tc.  Return FALSE if the symbol wasn't found. *)
+
+PROCEDURE endRoutine(rname:symbol);
+(* Clean up the symbol table after a routine has been compiled.  This includes
+   deleting the locals from the table. *)
+
+END SymbolTable.
+

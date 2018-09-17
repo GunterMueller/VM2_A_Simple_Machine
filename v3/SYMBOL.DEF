@@ -1,0 +1,146 @@
+DEFINITION MODULE Symbol;
+
+(* The symbol data structure contains all the information about symbols (like
+   variables and routine names).  Symbol lists are used for lists of formals
+   and locals.
+
+  Changes made for part 3:
+    1.  The word "symbol" has been removed from all routine names.  Instead,
+        the module will be imported whole (IMPORT Symbol) and the module
+        name will serve to identify the routines (e.g. Symbol.empty).
+        Also, SymbolClass --> Class.
+    2.  symbolTokClass --> tokClass; setSymbolTokClass --> setTokenClass.
+    3.  The number of symbol classes has been expanded.
+    4.  The function tokenClassToType has been moved here from Token to
+        avoid circular references between Token.DEF and Symbol.DEF.
+    5.  The type mode and the function tokenClassToMode have been added.
+*)
+
+FROM Token IMPORT stringType, tokenClass;
+
+EXPORT QUALIFIED symbol, emptySymbol, Class, class,  string, type, lexLevel,
+    offset, formals, locals, next, prev, tokClass,
+    setFormals, setLocals, setType, setNext, setPrev, setOffset, setTokenClass,
+    classEqual, empty, equal, new, free, numFormals, numLocals,
+    symbolList, emptySymbolList, slEmpty, slSymbol, slNext, addToSymbolList,
+    freeSymbolList, modeType, isType, mode, setMode, size, setSize,
+    highBound, lowBound, setBounds, open, setOpen, newArrayType,
+    anonymous, copyArrayType, setString;
+
+TYPE
+    symbol;
+    symbolList;
+    Class =   (* the different kinds of symbols *)
+        (Proc, Func, ScalarType, ArrayType, Global, Local, Formal, Keyword, 
+	        Undeclared);
+    modeType = (mIn, mOut, mInOut);
+
+
+VAR emptySymbol:symbol;
+    emptySymbolList:symbolList;
+
+                (*** Symbols ***)
+
+
+PROCEDURE class(s:symbol):Class;
+(* Return the class of the symbol *)
+
+PROCEDURE string(s:symbol; VAR str:stringType);
+PROCEDURE setString(s:symbol; str:ARRAY OF CHAR);
+(* Return or set the name of the symbol, as a string *)
+
+(* Symbols are declared to be of a certain type (except procedures) *)
+PROCEDURE type(s:symbol):symbol;
+PROCEDURE setType(s, t:symbol);
+
+PROCEDURE lexLevel(s:symbol):CARDINAL;
+(* Return the lexical level at which the symbol was declared *)
+
+(* Each formal and local has an offset from the frame pointer. *)
+PROCEDURE offset(s:symbol):INTEGER;
+PROCEDURE setOffset(s:symbol; o:INTEGER);
+
+(* Formals also have a mode. *)
+PROCEDURE mode(s:symbol):modeType;
+PROCEDURE setMode(s:symbol; m:modeType);
+
+(* Type objects have an associate size. *)
+PROCEDURE size(s:symbol):CARDINAL;
+PROCEDURE setSize(s:symbol; c:CARDINAL);
+
+(* Array types have bounds, and a Boolean for open array params. *)
+PROCEDURE lowBound(s:symbol):INTEGER;
+PROCEDURE highBound(s:symbol):INTEGER;
+PROCEDURE setBounds(s:symbol; low, high:INTEGER);
+PROCEDURE open(s:symbol):BOOLEAN;
+PROCEDURE setOpen(s:symbol; b:BOOLEAN);
+
+(* These are for routines. They get and set the lists of formals and locals. *)
+PROCEDURE formals(s:symbol):symbolList;
+PROCEDURE locals(s:symbol):symbolList;
+PROCEDURE setFormals(s:symbol; sl:symbolList);
+PROCEDURE setLocals(s:symbol; sl:symbolList);
+
+(* Return the number of formals or locals in the routine. *)
+PROCEDURE numFormals(s:symbol):CARDINAL;
+PROCEDURE numLocals(s:symbol):CARDINAL;
+
+(* These next two are for implementing a doubly linked list. See SymbolTable.*)
+PROCEDURE next(s:symbol):symbol;
+PROCEDURE prev(s:symbol):symbol;
+PROCEDURE setNext(s1, s2:symbol);
+PROCEDURE setPrev(s1, s2:symbol);
+
+(* Keyword symbols have a corresponding token class. *)
+PROCEDURE tokClass(s:symbol):tokenClass;
+PROCEDURE setTokenClass(s:symbol; tc:tokenClass);
+
+PROCEDURE classEqual(s:symbol; sc:Class):BOOLEAN;
+(* Returns TRUE if the class of s equals sc. *)
+
+PROCEDURE equal(s1, s2:symbol):BOOLEAN;
+(* Returns TRUE if the two symbols are the same. *)
+
+PROCEDURE empty(s:symbol):BOOLEAN;
+(* Returns TRUE if the symbol is the emptySymbol. *)
+
+PROCEDURE anonymous(s:symbol):BOOLEAN;
+(* TRUE iff the array type is anonymous, i.e. unnamed. *)
+
+PROCEDURE new(str:stringType; sc:Class; scop:CARDINAL;
+                typ:symbol):symbol;
+(* Creates a new symbol. *)
+
+PROCEDURE newArrayType(baseType:symbol; lowBound, highBound:INTEGER;
+                       open:BOOLEAN; lexLev:CARDINAL):symbol;
+(* Creates a new array type object. *)
+
+PROCEDURE copyArrayType(s:symbol):symbol;
+(* Copies an array type object *)
+
+PROCEDURE free(s:symbol);
+(* Frees the storage associated with s. *)
+
+PROCEDURE isType(s:symbol):BOOLEAN;
+(* TRUE if the class of s is ArrayType or ScalarType. *)
+
+                (*** Symbol Lists ***)
+
+PROCEDURE slEmpty(sl:symbolList):BOOLEAN;
+(* Returns TRUE if sl is the empty symbol list. *)
+
+PROCEDURE slNext(sl:symbolList):symbolList;
+(* Gets the rest of the symbol list. *)
+
+PROCEDURE slSymbol(sl:symbolList):symbol;
+(* Gets the first symbol in the list *)
+
+PROCEDURE addToSymbolList(s:symbol; sl:symbolList):symbolList;
+(* Adds s to sl at the front.  Return the new symbol list. *)
+
+PROCEDURE freeSymbolList(sl:symbolList);
+(* Frees the storage associate with sl (but NOT the storage of the symbols
+   in sl! *)
+
+END Symbol.
+

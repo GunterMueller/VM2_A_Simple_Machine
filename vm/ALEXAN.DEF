@@ -1,0 +1,29 @@
+DEFINITION MODULE ALexAn;
+
+(* The assembler's lexical analyzer.  Converts a stream of characters into
+   a stream of tokens.  *)
+
+EXPORT QUALIFIED stringlen, tokenClass, stringType, token, getToken;
+
+CONST stringlen = 100;
+
+TYPE
+    tokenClass = (EndOfLine, EndOfFile, Directive, Identifier, Label,
+                  Char, Integer, String, Comma);
+
+    stringType = ARRAY[0..stringlen] OF CHAR;
+
+    token = RECORD
+                CASE class:tokenClass OF
+                    Directive, Identifier, Label, String: string:stringType;
+                |   Char: char:CHAR;
+                |   Integer: int:INTEGER;
+                END;
+            END;
+
+
+PROCEDURE getToken(VAR t:token);
+
+
+END ALexAn.
+

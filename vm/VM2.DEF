@@ -1,0 +1,40 @@
+DEFINITION MODULE VM2;
+
+(* The VM2 virtual machine. *)
+
+FROM VM2Defs IMPORT address;
+FROM SYSTEM IMPORT WORD;
+
+EXPORT QUALIFIED putWord, getWord, run, singleStep,
+    getStackLimit, setStackLimit, getProgramCtr, setProgramCtr, getStackPtr,
+    setStackPtr, getFramePtr, setFramePtr, reset;
+
+
+PROCEDURE putWord(w:WORD; a:address);
+(* Put the word at the address in memory. *)
+
+PROCEDURE getWord(a:address):WORD;
+(* Return the word at the address. *)
+
+PROCEDURE run(initialPC: address);
+(* Run the machine. *)
+
+PROCEDURE singleStep;
+(* Execute the single instruction at the current programCtr value. *)
+
+(* Read and change the various registers. *)
+
+PROCEDURE setStackLimit(a:address);
+PROCEDURE getStackLimit():address;
+PROCEDURE setStackPtr(a:address);
+PROCEDURE getStackPtr():address;
+PROCEDURE getProgramCtr():address;
+PROCEDURE setProgramCtr(a:address);
+PROCEDURE getFramePtr():address;
+PROCEDURE setFramePtr(a:address);
+
+PROCEDURE reset;
+(* Reset the machine: flushes the stack. *)
+
+END VM2.
+

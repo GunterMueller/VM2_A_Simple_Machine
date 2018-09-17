@@ -1,0 +1,41 @@
+DEFINITION MODULE TypeChecker;
+
+(* Handles the actual type-checking of SIMPL expressions and statements. *)
+
+FROM Token IMPORT tokenClass, typeType;
+FROM Node IMPORT node;
+FROM Symbol IMPORT symbol;
+
+EXPORT QUALIFIED typeCompatible, opAppropriate, callCheck, readCheck, 
+                 writeCheck, boolCheck, assignCheck, binopCheck, unopCheck,
+                 returnCheck;
+
+PROCEDURE typeCompatible(t1, t2:typeType):BOOLEAN;
+(* Returns TRUE if t1 and t2 are compatible types.  In order to avoid
+   cascades of error messages, if one or both of the types is tUnknown, 
+   it still returns TRUE. *)
+
+PROCEDURE opAppropriate(op:tokenClass; arg:node):BOOLEAN;
+(* Returns TRUE if the type of the argument can be handled by the operator *)
+
+PROCEDURE callCheck(routine:symbol; args:node);
+(* Checks the procedure or function call for right number and types of args. *)
+
+PROCEDURE readCheck(actuals:node);
+(* Checks the call to the READ built-in procedure. *)
+
+PROCEDURE writeCheck(actuals:node);
+(* Checks the call to the WRITE built-in procedure. *)
+
+PROCEDURE boolCheck(n:node);
+
+PROCEDURE assignCheck(var:symbol; expr:node);
+
+PROCEDURE returnCheck(routine:symbol; expr:node):BOOLEAN;
+
+PROCEDURE binopCheck(op:tokenClass; leftarg, rightarg:node):BOOLEAN;
+
+PROCEDURE unopCheck(op:tokenClass; arg:node):BOOLEAN;
+
+END TypeChecker.
+

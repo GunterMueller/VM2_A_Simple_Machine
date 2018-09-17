@@ -1,0 +1,25 @@
+DEFINITION MODULE LabelTable;
+
+(* The label table stores labels and their associated addresses.  It also keeps
+   track of whether or not the label is defined. *)
+
+FROM VM2Defs IMPORT address;
+
+EXPORT QUALIFIED defType, insert, lookup, map;
+
+TYPE defType = (Defined, Undefined);
+     mapProc = PROCEDURE(VAR ARRAY OF CHAR, address, defType);
+
+PPROCEDURE insert(label:ARRAY OF CHAR; a:address; d:defType):BOOLEAN;
+(* Inserts a label into the table.  Returns TRUE if the table wasn't full.
+   If the label is already present, it is overwritten. *)
+
+PROCEDURE lookup(label:ARRAY OF CHAR; VAR a:address; VAR d:defType):BOOLEAN;
+(* Retrieves the address and defType associated with the label from the table.
+   Returns TRUE if the label was found. *)
+
+PROCEDURE map(proc: mapProc);
+(* Executes the procedure on each non-empty entry of the table. *)
+
+END LabelTable.
+

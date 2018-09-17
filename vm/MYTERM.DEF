@@ -1,0 +1,34 @@
+DEFINITION MODULE MyTerminal;
+
+
+(* Some small but useful additions to the Terminal module. *)
+
+EXPORT QUALIFIED WriteString, WriteLn, Write, Read, ClearScreen, Beep,
+        WriteLnString, WriteInt, WriteCard, pause, fatal, spaces, places;
+
+PROCEDURE WriteString(s:ARRAY OF CHAR);
+PROCEDURE WriteLn;
+PROCEDURE Write(c:CHAR);
+PROCEDURE Read(VAR c:CHAR);
+PROCEDURE ClearScreen;
+PROCEDURE Beep;
+
+PROCEDURE WriteLnString(s:ARRAY OF CHAR);
+PROCEDURE WriteInt(i:INTEGER; spaces:CARDINAL);
+PROCEDURE WriteCard(c, spaces:CARDINAL);
+
+PROCEDURE pause(msg:ARRAY OF CHAR);
+(* Prevents the screen from blanking and returning to the Finder until the
+   user hits a key.  msg is typed out. *)
+
+PROCEDURE fatal(msg:ARRAY OF CHAR);
+(* Prints the message, does a pause, and HALTs. *)
+
+PROCEDURE spaces(n:INTEGER);
+(* Prints n spaces, if n > 0. *)
+
+PROCEDURE places(c:CARDINAL):CARDINAL;
+(* Returns the number of places it would take to print c. *)
+
+END MyTerminal.
+

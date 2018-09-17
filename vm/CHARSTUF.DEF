@@ -1,0 +1,36 @@
+DEFINITION MODULE CharStuff;
+
+(* Useful functions for manipulating characters. *)
+
+
+EXPORT QUALIFIED TAB, EOF, getChar, ungetChar,
+        isAlphaNum, isLetter, isUpper, isLower, isDigit, isWhite;
+
+CONST   TAB = 11C;
+        EOF = 0C;       (* end of file *)
+
+(* getChar and ungetChar use InOut's Read procedure but allow you to push
+   a character back on the input.  Only one character at a time can be
+   ungotten. getChar returns EOF on end of file. *)
+
+PROCEDURE getChar():CHAR;
+PROCEDURE ungetChar;
+
+(* These next few are useful for classifying characters. *)
+
+PROCEDURE isAlphaNum(c:CHAR):BOOLEAN;
+PROCEDURE isLetter(c:CHAR):BOOLEAN;
+PROCEDURE isUpper(c:CHAR):BOOLEAN;
+PROCEDURE isLower(c:CHAR):BOOLEAN;
+PROCEDURE isDigit(c:CHAR):BOOLEAN;
+PROCEDURE isWhite(c:CHAR):BOOLEAN;      (* space, tab or newline (EOL)  *)
+
+
+(* This converts a lower-case character to upper-case, or does nothing if
+   the character isn't a lower-case character.  The same procedure is
+   available in module StringStuff under the name charCap.  *)
+
+PROCEDURE toUpper(c:CHAR):CHAR;
+
+END CharStuff.
+

@@ -1,0 +1,27 @@
+DEFINITION MODULE Routines;
+
+(* The part of the parser that deals with procedures and functions.
+
+   Syntax:
+
+<routines> ::= <empty> | <proc> <routines> | <func> <routines>
+<proc> ::= procedure <id> <formals> ; <vars> <block> ;
+<func> ::= function <id> <formals> : <id> ; <vars> <block> ;
+<formals> ::= <empty> | ( <formlist> )
+<formlist> ::= <formdecl> | <formdecl> ; <formlist>
+<formdecl> ::= <idlist> : <mode> <typeId>
+<mode> ::= <empty> | IN | OUT | IN OUT
+<typeId> ::= <id> | ARRAY OF <id>
+
+Changes for part 3:
+    1. Modes handled.
+    2. Open array parameters handled.
+    
+*)
+
+EXPORT QUALIFIED routines;
+
+PROCEDURE routines;
+
+END Routines.
+

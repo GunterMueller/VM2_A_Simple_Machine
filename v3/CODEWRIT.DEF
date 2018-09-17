@@ -1,0 +1,87 @@
+DEFINITION MODULE CodeWrite;
+
+(* This module outputs the code for the SIMPL compiler.  *)
+
+FROM Symbol IMPORT symbol;
+FROM Token IMPORT tokenClass, stringType;
+
+EXPORT QUALIFIED writeLabel, writeStringLabel, writeRoutineLabel, writeHalt,
+        writeStringBranch, writeBranch, writeCondBranch, writePop, writeCall,
+        writeWriteInt, writeReadInt, writeReturn, writeFReturn, writeOp,
+        writeInt, writeBool, writeSymbol, writeChar, writeSymPop, 
+        writeWriteChar, writeReadChar, writeLow, writeHigh, writeAddr, 
+        writeCopy, writeMin, writeContents, writeSetSP, writeAref, 
+        recordString, writeStrings;
+
+
+PROCEDURE writeLabel(c:CARDINAL);
+(* Writes an "L" followed by the number, then a colon. *)
+
+PROCEDURE writeStringLabel(s:ARRAY OF CHAR);
+(* Just writes the string followed by a colon. *)
+
+PROCEDURE writeRoutineLabel(routine:symbol);
+(* Writes the name of the routine followed by a colon, and writes (on the 
+   screen) the procedure name so the user knows it's being compiled. *)
+
+PROCEDURE writeStringBranch(s: ARRAY OF CHAR);
+(* Write a branch followed by the string *)
+
+PROCEDURE writeCondBranch(tc:tokenClass; c:CARDINAL);
+(* Write a conditional branch (Equal, Greater or Less) followed by "L", then
+   the number. *)
+
+PROCEDURE writeBranch(c:CARDINAL);
+(* Write an unconditional branch to the label. *)
+
+PROCEDURE writeCall(s:symbol);
+(* Generate a call instruction with the symbol *)
+
+PROCEDURE writeWriteInt;
+PROCEDURE writeReadInt;
+PROCEDURE writeWriteChar;
+PROCEDURE writeReadChar;
+(* instructions for I/O *)
+
+PROCEDURE writeReturn(numFormals:CARDINAL);
+PROCEDURE writeFReturn(numFormals:CARDINAL);
+(* Two types of return instructions; both take the number of formals as arg. *)
+
+PROCEDURE writeOp(tc:tokenClass);
+(* Write the instruction corresponding to the operator *)
+
+PROCEDURE writeInt(i:INTEGER);
+PROCEDURE writeBool(b:BOOLEAN);
+PROCEDURE writeChar(c:CHAR);
+(* Write pushes for these constants. *)
+
+PROCEDURE writeSymbol(s:symbol);
+(* Generate the appropriate push instruction for the symbol *)
+
+PROCEDURE writeSymPop(s:symbol);
+(* Generate the appropriate pop instruction for the symbol *)
+
+PROCEDURE writeHalt;
+
+PROCEDURE writeAddr(s:symbol);
+(* Put the address of the symbol on the stack *)
+
+PROCEDURE writeLow(s:symbol);
+PROCEDURE writeHigh(s:symbol);
+(* For low and high bounds of open arrays.  *)
+
+PROCEDURE writeCopy;
+PROCEDURE writeMin;
+PROCEDURE writeContents;
+PROCEDURE writePop;
+PROCEDURE writeSetSP(i:INTEGER);
+PROCEDURE writeAref(size:CARDINAL);
+
+PROCEDURE recordString(lab:CARDINAL; VAR s:stringType);
+(* remembers a string, to be output later *)
+
+PROCEDURE writeStrings;
+(* Writes out remembered strings, preceded by their labels. *)
+
+END CodeWrite.
+

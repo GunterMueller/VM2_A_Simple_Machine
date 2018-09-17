@@ -1,0 +1,39 @@
+DEFINITION MODULE LexAn;
+
+(* The lexical analyzer for the SIMPL compiler.  It uses the InOut module
+   do input, so you can get input from a file by redirecting it with
+   InOut.OpenInput.
+   This module also handles errors. *)
+
+FROM Token IMPORT token, tokenClass;
+
+EXPORT QUALIFIED getToken, ungetToken, getTokenClass, tokenErrorCheck,
+    getTokenErrorCheck, errorFlag, compError, peekTokenClass;
+
+VAR errorFlag:BOOLEAN;      (* Set to TRUE when an error occurs. *)
+
+PROCEDURE getToken(VAR t:token);
+(* Get a token from the input stream. *)
+
+PROCEDURE ungetToken;
+(* Push a token back on the input stream.  Can only unget one at a time. *)
+
+PROCEDURE getTokenClass():tokenClass;
+(* Get a token from the input stream, but just return its class. *)
+
+PROCEDURE peekTokenClass():tokenClass;
+(* Get a token from the input stream, unget it, and return its class. *)
+
+PROCEDURE tokenErrorCheck(tc:tokenClass; msg: ARRAY OF CHAR);
+(* Read a token from the input stream and compare its class to tc.  If they
+   are the same, do nothing.  If they are different, write the current line
+   to the screen, print the message and unget the token. *)
+
+PROCEDURE getTokenErrorCheck(VAR t:token; tc:tokenClass; msg: ARRAY OF CHAR);
+(* Like tokenErrorCheck, but returns the token as well. *)
+
+PROCEDURE compError(msg:ARRAY OF CHAR);
+(* Writes the current line and displays msg. Sets errorFlag to TRUE. *)
+
+END LexAn.
+
