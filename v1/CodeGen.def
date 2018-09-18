@@ -1,0 +1,20 @@
+DEFINITION MODULE CodeGen;
+
+(* This module generates code from parse trees. *)
+
+FROM Node IMPORT node;
+FROM Symbol IMPORT symbol;
+
+EXPORT QUALIFIED genBlock, genGlobal, genLocals;
+
+PROCEDURE genBlock(n:node);
+(* Generate code for a block of statements. *)
+
+PROCEDURE genGlobal(s:symbol);
+(* Generate code for a global variable. *)
+
+PROCEDURE genLocals(routine:symbol);
+(* Generate code to set up the stack for local variables. *)
+
+END CodeGen.
+

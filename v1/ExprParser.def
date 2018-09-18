@@ -1,0 +1,22 @@
+DEFINITION MODULE ExprParser;
+
+(* The part of the parser that handles expressions.
+   Syntax:
+
+<expr>::= <expr>|<relexpr> | <relexpr> OR <expr> | <relexpr> AND <expr>
+<relexpr> ::= <intexpr> | <intexpr> <relation> <intexpr>
+<intexpr> ::= <term> | <term> + <intexpr> | <term> - <intexpr>
+<term> ::= <factor> | <factor> * <term> | <factor> / <term>
+<factor> ::= <id> | <number> | <call> | <char>
+              - <factor> | NOT <factor> | ( <expr> )
+
+*)
+
+FROM Node IMPORT node;
+
+EXPORT QUALIFIED expr;
+
+PROCEDURE expr():node;
+
+END ExprParser.
+
